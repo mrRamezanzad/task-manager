@@ -1,0 +1,2 @@
+# run project tests at least once before pushing into codebase
+npm test
