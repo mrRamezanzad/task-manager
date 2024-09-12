@@ -19,17 +19,24 @@ import { DeleteResult, UpdateResult } from 'typeorm';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { User as UserEntity } from 'src/auth/entity/user.entity';
 import { UUID } from 'crypto';
+import FilterTaskDto from './dto/filter-task.dto';
+import { Pagination } from 'nestjs-typeorm-paginate';
 
 @Controller('tasks')
 @UseGuards(JwtAuthGuard)
 @ApiTags('Tasks')
 @ApiSecurity('bearer')
 export class TaskController {
-  constructor(private readonly taskService: TaskService) {}
+  constructor(private readonly taskService: TaskService) { }
 
   @Post()
-  async create(@Body() createTaskDto :CreateTaskDto, @User() user: UserEntity): Promise<Task> {
+  async create(@Body() createTaskDto: CreateTaskDto, @User() user: UserEntity): Promise<Task> {
     return this.taskService.create({ ...createTaskDto, userId: user.id });
+  }
+
+  @Get()
+  findAll(@Query() query: FilterTaskDto): Promise<Pagination<Task>> {
+    return this.taskService.findAll(query);
   }
 
   @Get(':id')
